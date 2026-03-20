@@ -1,13 +1,13 @@
 Clear-Host
 
 # ===== CONFIG =====
-$apiURL = "https://keyauth.com/api/smitg0_14"  # <-- เปลี่ยนเป็น URL ของ KeyAuth คุณจริง ๆ
-$appName = "Smithshop all"                    # <-- ชื่อ Application ใน KeyAuth
-$secret = "d9b823207868f98f1cca7fb9c880047e525e05a1f998d6d07acc1862c207e2fc"                  # <-- Secret ของ Application
-$exeUrl = "https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
-$exeOutput = "$env:TEMP\fontdrvhost.exe"
+$AppName = "Smithshop all"
+$OwnerID = "gw1rzpahob"
+$Version = "1.0"
+$ExeURL = "https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
+$ExeOutput = "$env:TEMP\fontdrvhost.exe"
 
-# ===== CMDSMITHSHOP =====
+# ===== MENU =====
 Write-Host "=== MENU ==="
 Write-Host "1. Install"
 Write-Host "2. Clean"
@@ -18,14 +18,22 @@ switch ($choice) {
     "1" {
         $userKey = Read-Host "Enter your Key"
 
-        # ตัวอย่างเชื่อม KeyAuth แบบง่าย
-        # สำหรับตอนนี้ใช้ Key ที่คุณให้มาเป็นตัวตรวจสอบ
-        $validKey = "devsmithshop"
+        # สร้าง URL เช็ค KeyAuth
+        $encodedApp = [System.Uri]::EscapeDataString($AppName)
+        $apiURL = "https://keyauth.win/api/1.0/?type=license&key=$userKey&app=$encodedApp&ownerid=$OwnerID&version=$Version"
 
-        if ($userKey -eq $validKey) {
+        try {
+            $response = Invoke-RestMethod -Uri $apiURL -Method Get
+        } catch {
+            Write-Host "❌ Cannot reach KeyAuth server" -ForegroundColor Red
+            break
+        }
+
+        # ตรวจสอบ response
+        if ($response.success -eq $true) {
             Write-Host "✅ Key valid! Installing..."
-            Invoke-WebRequest $exeUrl -OutFile $exeOutput
-            Start-Process $exeOutput
+            Invoke-WebRequest $ExeURL -OutFile $ExeOutput
+            Start-Process $ExeOutput
             Write-Host "Installation complete ✅"
         } else {
             Write-Host "❌ Key invalid!" -ForegroundColor Red
@@ -33,8 +41,8 @@ switch ($choice) {
     }
     "2" {
         Write-Host "Cleaning..."
-        if (Test-Path $exeOutput) {
-            Remove-Item $exeOutput -Force
+        if (Test-Path $ExeOutput) {
+            Remove-Item $ExeOutput -Force
             Write-Host "File removed successfully ✅"
         } else {
             Write-Host "File not found ⚠️"
