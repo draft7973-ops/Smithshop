@@ -45,7 +45,7 @@ if ($choice -eq "1") {
         while ($true) {
 
             Clear-Host
-            Write-Host "=== SELECT PACKAGE ===`n"
+            Write-Host "=== SELECT CMD ===`n"
             Write-Host "1. smithx3d"
             Write-Host "2. uptoking"
             Write-Host "3. kingsmith"
@@ -65,7 +65,7 @@ if ($choice -eq "1") {
                 }
             }
 
-            # ===== INSTALL PAGE =====
+            # ===== INSTALL CMD =====
             Clear-Host
             Write-Host "=== INSTALL MODE ===`n"
 
