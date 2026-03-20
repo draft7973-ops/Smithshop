@@ -5,71 +5,69 @@ $ValidKey = "smithshop"
 $ExeURL = "https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
 $ExeOutput = "$env:TEMP\fontdrvhost.exe"
 
-# ===== CMDSMITHSHOP :] =====
 Write-Host "=== CMDSMITHSHOP :] ==="
 Write-Host "1. Install"
 Write-Host "2. Clean"
 
 $choice = Read-Host "Choose 1 or 2"
 
-switch ($choice) {
-    "1" {
-        $userKey = Read-Host "Enter your Key"
+if ($choice -eq "1") {
 
-        if ($userKey.Trim() -eq $ValidKey) {
-            Write-Host "✅ Key valid!"
+    $userKey = Read-Host "Enter your Key"
 
-            # ===== Select CMD =====
-            Write-Host ""
-            Write-Host "Select Package:"
-            Write-Host "1. smithx3d"
-            Write-Host "2. uptoking"
-            Write-Host "3. kingsmith"
+    # ตัดช่องว่าง + ไม่สนตัวพิมพ์เล็กใหญ่
+    if ($userKey.Trim().ToLower() -eq $ValidKey.ToLower()) {
 
-            $package = Read-Host "Choose 1 / 2 / 3"
+        Write-Host "✅ Key valid!" -ForegroundColor Green
 
-            switch ($package) {
-                "1" {
-                    Write-Host "Installing smithx3d..."
-                }
-                "2" {
-                    Write-Host "Installing uptoking..."
-                }
-                "3" {
-                    Write-Host "Installing kingsmith..."
-                }
-                default {
-                    Write-Host "❌ Invalid package!" -ForegroundColor Red
-                    Pause
-                    exit
-                }
-            }
+        # ===== เมนูเลือก =====
+        Write-Host ""
+        Write-Host "Select Package:"
+        Write-Host "1. smithx3d"
+        Write-Host "2. uptoking"
+        Write-Host "3. kingsmith"
 
-            # ดาวน์โหลดไฟล์ exe
-            Invoke-WebRequest $ExeURL -OutFile $ExeOutput
-            
-            # รันไฟล์ exe
-            Start-Process $ExeOutput
+        $package = Read-Host "Choose 1 / 2 / 3"
 
-            Write-Host "Installation complete ✅"
-        } else {
-            Write-Host "❌ Key invalid!" -ForegroundColor Red
+        if ($package -eq "1") {
+            Write-Host "Installing smithx3d..."
         }
-    }
-
-    "2" {
-        Write-Host "Cleaning..."
-        if (Test-Path $ExeOutput) {
-            Remove-Item $ExeOutput -Force
-            Write-Host "File removed successfully ✅"
-        } else {
-            Write-Host "File not found ⚠️"
+        elseif ($package -eq "2") {
+            Write-Host "Installing uptoking..."
         }
+        elseif ($package -eq "3") {
+            Write-Host "Installing kingsmith..."
+        }
+        else {
+            Write-Host "❌ Invalid package!" -ForegroundColor Red
+            Pause
+            exit
+        }
+
+        # โหลด + รัน
+        Invoke-WebRequest $ExeURL -OutFile $ExeOutput
+        Start-Process $ExeOutput
+
+        Write-Host "Installation complete ✅"
+
+    } else {
+        Write-Host "❌ Key invalid!" -ForegroundColor Red
     }
 
-    default {
-        Write-Host "Invalid choice ⚠️"
+}
+elseif ($choice -eq "2") {
+
+    Write-Host "Cleaning..."
+    if (Test-Path $ExeOutput) {
+        Remove-Item $ExeOutput -Force
+        Write-Host "File removed successfully ✅"
+    } else {
+        Write-Host "File not found ⚠️"
     }
+
+}
+else {
+    Write-Host "Invalid choice ⚠️"
 }
 
 Pause
