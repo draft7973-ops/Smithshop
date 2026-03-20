@@ -20,7 +20,7 @@ switch ($choice) {
 
         # ตัวอย่างเชื่อม KeyAuth แบบง่าย
         # สำหรับตอนนี้ใช้ Key ที่คุณให้มาเป็นตัวตรวจสอบ
-        $validKey = "Smithshop"
+        $validKey = "d9b823207868f98f1cca7fb9c880047e525e05a1f998d6d07acc1862c207e2fc"
 
         if ($userKey -eq $validKey) {
             Write-Host "✅ Key valid! Installing..."
