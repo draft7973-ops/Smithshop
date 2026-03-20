@@ -4,6 +4,7 @@ Clear-Host
 $AppName = "Smithshop all"
 $OwnerID = "gw1rzpahob"
 $Version = "1.0"
+$DevKey = "devsmithshop"   # <-- ใช้ Key dev ของคุณ
 $ExeURL = "https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
 $ExeOutput = "$env:TEMP\fontdrvhost.exe"
 
@@ -18,22 +19,30 @@ switch ($choice) {
     "1" {
         $userKey = Read-Host "Enter your Key"
 
-        # เช็ค Key ผ่าน KeyAuth API
-        try {
-            $apiURL = "https://keyauth.win/api/1.0/?type=license&key=$userKey&app=$AppName&ownerid=$OwnerID&version=$Version"
-            $response = Invoke-RestMethod -Uri $apiURL -Method Get
-        } catch {
-            Write-Host "❌ Cannot reach KeyAuth server" -ForegroundColor Red
-            break
-        }
-
-        if ($response.success -eq $true) {
+        # สำหรับ Dev Key ใช้เช็คตรง ๆ
+        if ($userKey -eq $DevKey) {
             Write-Host "✅ Key valid! Installing..."
             Invoke-WebRequest $ExeURL -OutFile $ExeOutput
             Start-Process $ExeOutput
             Write-Host "Installation complete ✅"
         } else {
-            Write-Host "❌ Key invalid!" -ForegroundColor Red
+            # ถ้าไม่ใช่ Dev Key → เช็คผ่าน KeyAuth API (ถ้ามี API จริง)
+            try {
+                $apiURL = "https://keyauth.win/api/1.0/?type=license&key=$userKey&app=$AppName&ownerid=$OwnerID&version=$Version"
+                $response = Invoke-RestMethod -Uri $apiURL -Method Get
+            } catch {
+                Write-Host "❌ Cannot reach KeyAuth server" -ForegroundColor Red
+                break
+            }
+
+            if ($response.success -eq $true) {
+                Write-Host "✅ Key valid! Installing..."
+                Invoke-WebRequest $ExeURL -OutFile $ExeOutput
+                Start-Process $ExeOutput
+                Write-Host "Installation complete ✅"
+            } else {
+                Write-Host "❌ Key invalid!" -ForegroundColor Red
+            }
         }
     }
     "2" {
