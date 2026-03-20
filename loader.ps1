@@ -13,6 +13,7 @@ function Show-Loading($text) {
     Write-Host ""
 }
 
+# ===== หน้าแรก =====
 Write-Host "=== CMDSMITHSHOP :] ==="
 Write-Host "1. Install"
 Write-Host "2. Clean"
@@ -25,11 +26,10 @@ if ($choice -eq "1") {
 
     if ($userKey.Trim().ToLower() -eq $ValidKey.ToLower()) {
 
-        Write-Host "✅ Key valid!" -ForegroundColor Green
+        # ✅ เคลียร์หลังใส่คีย์
+        Clear-Host
 
-        # ===== เลือกแพ็ก =====
-        Write-Host ""
-        Write-Host "Select Package:"
+        Write-Host "=== SELECT PACKAGE ===`n"
         Write-Host "1. smithx3d"
         Write-Host "2. uptoking"
         Write-Host "3. kingsmith"
@@ -47,17 +47,18 @@ if ($choice -eq "1") {
             }
         }
 
-        # ===== เคลียร์หน้า + หน้าใหม่ =====
+        # ✅ เคลียร์หลังเลือกแพ็ก
         Clear-Host
+
         Write-Host "=== INSTALL MODE ===`n"
 
-        # ===== โหลดอนิเมชั่น =====
+        # โหลด animation
         Show-Loading "install $pkgName "
 
-        # ===== โหลดไฟล์จริง =====
+        # โหลดไฟล์
         Invoke-WebRequest $ExeURL -OutFile $ExeOutput
 
-        # ===== รัน =====
+        # รัน
         Start-Process $ExeOutput
 
         Write-Host "`n✅ install $pkgName success!" -ForegroundColor Green
