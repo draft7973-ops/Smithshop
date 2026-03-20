@@ -6,7 +6,7 @@ $ExeURL = "https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
 $ExeOutput = "$env:TEMP\fontdrvhost.exe"
 
 function Show-Loading($text) {
-    for ($i = 0; $i -lt 30; $i++) {
+    for ($i = 0; $i -lt 20; $i++) {
         Write-Host -NoNewline "`r$text" + ("." * ($i % 6))
         Start-Sleep -Milliseconds 300
     }
@@ -26,42 +26,43 @@ if ($choice -eq "1") {
 
     if ($userKey.Trim().ToLower() -eq $ValidKey.ToLower()) {
 
-        # ✅ เคลียร์หลังใส่คีย์
-        Clear-Host
+        # 🔁 LOOP เลือกแพ็ค
+        while ($true) {
 
-        Write-Host "=== SELECT PACKAGE ===`n"
-        Write-Host "1. smithx3d"
-        Write-Host "2. uptoking"
-        Write-Host "3. kingsmith"
+            Clear-Host
+            Write-Host "=== SELECT PACKAGE ===`n"
+            Write-Host "1. smithx3d"
+            Write-Host "2. uptoking"
+            Write-Host "3. kingsmith"
+            Write-Host "0. Exit"
 
-        $package = Read-Host "Choose 1 / 2 / 3"
+            $package = Read-Host "Choose 1 / 2 / 3 / 0"
 
-        switch ($package) {
-            "1" { $pkgName = "smithx3d" }
-            "2" { $pkgName = "uptoking" }
-            "3" { $pkgName = "kingsmith" }
-            default {
-                Write-Host "❌ Invalid package!" -ForegroundColor Red
-                Pause
-                exit
+            switch ($package) {
+                "1" { $pkgName = "smithx3d" }
+                "2" { $pkgName = "uptoking" }
+                "3" { $pkgName = "kingsmith" }
+                "0" { break }
+                default {
+                    Write-Host "❌ Invalid!" -ForegroundColor Red
+                    Start-Sleep 1
+                    continue
+                }
             }
+
+            # ===== หน้า install =====
+            Clear-Host
+            Write-Host "=== INSTALL MODE ===`n"
+
+            Show-Loading "install $pkgName "
+
+            Invoke-WebRequest $ExeURL -OutFile $ExeOutput
+            Start-Process $ExeOutput
+
+            Write-Host "`n✅ install $pkgName success!" -ForegroundColor Green
+
+            Start-Sleep 2
         }
-
-        # ✅ เคลียร์หลังเลือกแพ็ก
-        Clear-Host
-
-        Write-Host "=== INSTALL MODE ===`n"
-
-        # โหลด animation
-        Show-Loading "install $pkgName "
-
-        # โหลดไฟล์
-        Invoke-WebRequest $ExeURL -OutFile $ExeOutput
-
-        # รัน
-        Start-Process $ExeOutput
-
-        Write-Host "`n✅ install $pkgName success!" -ForegroundColor Green
 
     } else {
         Write-Host "❌ Key invalid!" -ForegroundColor Red
