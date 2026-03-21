@@ -94,7 +94,6 @@ if ($choice -eq "1") {
             }
         }
 
-        # ===== INSTALL CMD =====
         Clear-Host
         Write-Host "=== INSTALL MODE ===`n"
 
