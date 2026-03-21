@@ -4,7 +4,7 @@ Clear-Host
 # ===== KEYAUTH CONFIG =====
 $appname = "Smithshop all"
 $ownerid = "gw1rzpahob"
-$secret  = "d9b823207868f98f1cca7fb9c880047e525e05a1f998d6d07acc1862c207e2fc"
+$secret  = "b46e7a9ea4b86244898a817972afd189a50a6fc0a7706ad78d277008cc7f3606"
 $version = "1.0"
 
 # ===== CONFIG =====
