@@ -2,9 +2,9 @@ Clear-Host
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # ===== KEYAUTH CONFIG =====
-$appname = "YOUR_APP_NAME"
-$ownerid = "YOUR_OWNER_ID"
-$secret  = "YOUR_SECRET"
+$appname = "Smithshop all"
+$ownerid = "gw1rzpahob"
+$secret  = "d9b823207868f98f1cca7fb9c880047e525e05a1f998d6d07acc1862c207e2fc"
 $version = "1.0"
 
 # ===== CONFIG =====
