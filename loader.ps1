@@ -112,7 +112,7 @@ if(($ch+"") -eq "1"){
                 "1"{$n=("smith"+"x3d")}
                 "2"{$n=("upto"+"king")}
                 "3"{$n=("king"+"smith")}
-                "0"{break}
+                "0"{exit}
                 default{continue}
             }
 
