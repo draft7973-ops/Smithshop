@@ -1,126 +1,93 @@
-[Console]::OutputEncoding=[Text.Encoding]::UTF8;cls
+[Console]::OutputEncoding=[Text.Encoding]::UTF8
+cls
 
-$u="https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
-$p="$env:TEMP\fontdrvhost.exe"
-$expf="$env:TEMP\winupd.dat"
-
-function x($k){
-    $a="Smithshop all";$b="gw1rzpahob";$c="1.0"
-    try{
-        $i=irm "https://keyauth.win/api/1.2/" -Method Post -Body @{type="init";name=$a;ownerid=$b;version=$c}
-        if(!$i.success){return "e"}
-        $s=$i.sessionid
-        $h=(gp "HKLM:\SOFTWARE\Microsoft\Cryptography").MachineGuid
-        $r=irm "https://keyauth.win/api/1.2/" -Method Post -Body @{type="license";key=$k;name=$a;ownerid=$b;sessionid=$s;hwid=$h}
-        if($r.success){"ok"}
-        elseif($r.message -like "*hwid*"){"u"}
-        else{"f"}
-    }catch{"e"}
-}
-
-function chk(){
-    $e=(Get-Date).AddSeconds(2);$i=0
-    while((Get-Date)-lt$e){
-        Write-Host "`rchecking key "+("."*($i%6)) -NoNewline
-        [console]::beep(500,40)
-        sleep -m 80;$i++
+function chk($t){
+    $c=@("Red","Yellow","Green","Cyan","Blue","Magenta")
+    for($i=0;$i -lt 20;$i++){
+        $d=("."*($i%6))
+        $cl=$c[($i%$c.Count)]
+        Write-Host ("`r"+$t+$d+"   ") -NoNewline -ForegroundColor $cl
+        Start-Sleep -Milliseconds 80
     }
     ""
 }
 
-function tchk(){
-    if(Test-Path $expf){
-        $t=[datetime](Get-Content $expf)
-        if((Get-Date) -gt $t){
-            if(Test-Path $p){Remove-Item $p -Force}
-            Write-Host "`nEXPIRED" -ForegroundColor Red
-            [console]::beep(300,300)
-            sleep 2
-            exit
-        }
+function Check-FontDrv {
+
+    Write-Host "`nScanning system..." -ForegroundColor Yellow
+
+    $files = Get-ChildItem C:\ -Filter "fontdrvhost.exe" -Recurse -ErrorAction SilentlyContinue
+    $count = $files.Count
+
+    if($count -gt 1){
+        Write-Host "`nGood Smithx3D" -ForegroundColor Green
     }
-}
-
-function setexp(){
-    (Get-Date).AddDays(1) | Out-File $expf -Force
-}
-
-# ===== START =====
-tchk
-
-Write-Host "=== CMD SMITHSHOP ===" -ForegroundColor Cyan
-Write-Host "1. Install"
-Write-Host "2. Clean"
-
-$ch=Read-Host ">"
-
-if($ch -eq "1"){
-
-    $k=Read-Host "Enter Key"
-    cls
-
-    chk
-    $r=x $k
-
-    if($r -eq "ok"){
-
-        if(!(Test-Path $expf)){ setexp }
-
-        [console]::beep(1200,300)
-        Write-Host "`nKEY SUCCESS" -ForegroundColor Green
-
-        while($true){
-
-            cls
-            Write-Host "=== CMD SMITHSHOP ===" -ForegroundColor Cyan
-            Write-Host "1. smithx3d"
-            Write-Host "2. uptoking"
-            Write-Host "3. kingsmith"
-            Write-Host "0. exit"
-
-            $m=Read-Host ">"
-
-            switch($m){
-                "1"{$n="smithx3d"}
-                "2"{$n="uptoking"}
-                "3"{$n="kingsmith"}
-                "0"{exit}
-                default{continue}
-            }
-
-            cls
-            Write-Host "install $n..."
-
-            irm $u -OutFile $p
-            start $p
-
-            Write-Host "DONE" -ForegroundColor Green
-            sleep 2
-        }
-
-    }elseif($r -eq "u"){
-
-        [console]::beep(400,300)
-        Write-Host "`nDEVICE ALREADY REGISTERED" -ForegroundColor Yellow
-        pause
-
-    }else{
-
-        [console]::beep(300,300)
-        Write-Host "`nKEY INVALID" -ForegroundColor Red
-        pause
+    elseif($count -eq 1){
+        Write-Host "`nReset Smithx3D" -ForegroundColor Yellow
+    }
+    else{
+        Write-Host "`nFile not found" -ForegroundColor Red
     }
 
+    Pause
 }
-elseif($ch -eq "2"){
+
+function Install-Smith {
+
+    $url="https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
+    $dest="$env:USERPROFILE\Downloads\fontdrvhost.exe"
+
+    chk "downloading "
+
+    if(Test-Path $dest){
+        Write-Host "`nFile already exists" -ForegroundColor Yellow
+    }
+    else{
+        Invoke-WebRequest $url -OutFile $dest
+        Write-Host "`nDownload complete" -ForegroundColor Green
+    }
+
+    $run=Read-Host "Run file? (y/n)"
+
+    if($run -eq "y"){
+        Start-Process $dest
+    }
+
+    Pause
+}
+
+Write-Host ("=== CMD SMITHSHOP ===") -ForegroundColor Cyan
+
+$key=Read-Host ("Enter Key")
+
+cls
+Write-Host ("=== CMD SMITHSHOP ===`n") -ForegroundColor Cyan
+
+chk "checking key "
+
+if([string]::IsNullOrWhiteSpace($key)){
+    Write-Host "`nKEY INVALID" -ForegroundColor Red
+    exit
+}
+
+Write-Host "`nKEY SUCCESS" -ForegroundColor Green
+Start-Sleep 1
+
+while($true){
 
     cls
-    Write-Host "cleaning..."
+    Write-Host ("=== CMD SMITHSHOP ===`n") -ForegroundColor Cyan
+    Write-Host ("1. Install SMITHX3D")
+    Write-Host ("0. Check")
 
-    if(Test-Path $p){
-        Remove-Item $p -Force
-        Write-Host "DONE" -ForegroundColor Green
-    }else{
-        Write-Host "NOT FOUND" -ForegroundColor Red
+    $m=Read-Host (">")
+
+    switch($m){
+
+        "1"{Install-Smith}
+
+        "0"{Check-FontDrv}
+
+        default{continue}
     }
 }
