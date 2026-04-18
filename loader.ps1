@@ -73,7 +73,7 @@ Write-Host "`nScanning system..." -ForegroundColor Yellow
 
 $paths = @(
 "$env:windir\System32\fontdrvhost.exe",
-"$env:USERPROFILE\Downloads\fontdrvhost.exe"
+"$env:C:\Windows\System32\fontdrvhost.exe"
 )
 
 $files = $paths | Where-Object { Test-Path $_ }
