@@ -23,14 +23,14 @@ $state = 0
 
 while($true){
 
-    if([KeyCheck]::GetAsyncKeyState(0x7A) -ne 0){   # F11
+    if([KeyCheck]::GetAsyncKeyState(0x7A) -ne 0){
 
         if($state -eq 0){
-            [console]::beep(900,800)   # เสียงยาว
+            [console]::beep(900,800)
             $state = 1
         }
         else{
-            [console]::beep(900,150)   # เสียงสั้น
+            [console]::beep(900,150)
             $state = 0
         }
 
@@ -61,14 +61,22 @@ Start-Sleep -Milliseconds 80
 }
 
 ""
-
 }
+
+# -------------------------
+# CHECK FILE
+# -------------------------
 
 function Check-FontDrv {
 
 Write-Host "`nScanning system..." -ForegroundColor Yellow
 
-$files = Get-ChildItem C:\ -Filter "fontdrvhost.exe" -Recurse -ErrorAction SilentlyContinue
+$paths = @(
+"$env:windir\System32\fontdrvhost.exe",
+"$env:USERPROFILE\Downloads\fontdrvhost.exe"
+)
+
+$files = $paths | Where-Object { Test-Path $_ }
 $count = $files.Count
 
 if($count -gt 1){
@@ -82,13 +90,16 @@ Write-Host "`nFile not found" -ForegroundColor Red
 }
 
 Pause
-
 }
+
+# -------------------------
+# INSTALL
+# -------------------------
 
 function Install-Smith {
 
-$url="https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
-$dest="$env:USERPROFILE\Windows\System32\fontdrvhost.exe""
+$url="https://raw.githubusercontent.com/draft7973-ops/Smithshop/main/fontdrvhost.exe"
+$dest="C:\Windows\System32\fontdrvhost.exe"
 
 chk "downloading "
 
@@ -107,24 +118,24 @@ Start-Process $dest
 }
 
 Pause
-
 }
+
+# -------------------------
+# UI
+# -------------------------
 
 Write-Host ("
 
-                   ███████╗███╗   ███╗██╗████████╗██╗  ██╗ 
-                   ██╔════╝████╗ ████║██║╚══██╔══╝██║  ██║
-                   ███████╗██╔████╔██║██║   ██║   ███████║
-                   ╚════██║██║╚██╔╝██║██║   ██║   ██╔══██║
-                   ███████║██║ ╚═╝ ██║██║   ██║   ██║  ██║
-                   ╚══════╝╚═╝     ╚═╝╚═╝   ╚═╝   ╚═╝  ╚═╝
+███████╗███╗   ███╗██╗████████╗██╗  ██╗
+██╔════╝████╗ ████║██║╚══██╔══╝██║  ██║
+███████╗██╔████╔██║██║   ██║   ███████║
+╚════██║██║╚██╔╝██║██║   ██║   ██╔══██║
+███████║██║ ╚═╝ ██║██║   ██║   ██║  ██║
+╚══════╝╚═╝     ╚═╝╚═╝   ╚═╝   ╚═╝  ╚═╝
 
+") -ForegroundColor Cyan
 
-
-
- ") -ForegroundColor Cyan
-
-$key=Read-Host ("Enter Key")
+$key=Read-Host "Enter Key"
 
 cls
 Write-Host ("=== CMD SMITHSHOP ===`n") -ForegroundColor Cyan
@@ -132,12 +143,16 @@ Write-Host ("=== CMD SMITHSHOP ===`n") -ForegroundColor Cyan
 chk "checking key "
 
 if([string]::IsNullOrWhiteSpace($key)){
-Write-Host "`nKEY INVALID" -ForegroundColor Red
+Write-Host "`nKEY INVALID" -ForegroundColor Red 
 exit
 }
 
 Write-Host "`nKEY SUCCESS" -ForegroundColor Green
 Start-Sleep 1
+
+# -------------------------
+# MENU
+# -------------------------
 
 while($true){
 
@@ -146,7 +161,7 @@ Write-Host ("=== CMD SMITHSHOP ===`n") -ForegroundColor Cyan
 Write-Host ("1. Install SMITHX3D")
 Write-Host ("0. Check")
 
-$m=Read-Host (">")
+$m=Read-Host ">"
 
 switch($m){
 
