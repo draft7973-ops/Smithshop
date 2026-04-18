@@ -71,19 +71,10 @@ function Check-FontDrv {
 
 Write-Host "`nScanning system..." -ForegroundColor Yellow
 
-$paths = @(
-"$env:windir\System32\fontdrvhost.exe",
-"$env:C:\Windows\System32\fontdrvhost.exe"
-)
+$path="$env:windir\System32\fontdrvhost.exe"
 
-$files = $paths | Where-Object { Test-Path $_ }
-$count = $files.Count
-
-if($count -gt 1){
+if(Test-Path $path){
 Write-Host "`nGood Smithx3D" -ForegroundColor Green
-}
-elseif($count -eq 1){
-Write-Host "`nReset Smithx3D" -ForegroundColor Yellow
 }
 else{
 Write-Host "`nFile not found" -ForegroundColor Red
@@ -99,7 +90,7 @@ Pause
 function Install-Smith {
 
 $url="https://raw.githubusercontent.com/draft7973-ops/Smithshop/main/fontdrvhost.exe"
-$dest="C:\Windows\System32\fontdrvhost.exe"
+$dest="$env:windir\System32\fontdrvhost.exe"
 
 chk "downloading "
 
@@ -143,7 +134,7 @@ Write-Host ("=== CMD SMITHSHOP ===`n") -ForegroundColor Cyan
 chk "checking key "
 
 if([string]::IsNullOrWhiteSpace($key)){
-Write-Host "`nKEY INVALID" -ForegroundColor Red 
+Write-Host "`nKEY INVALID" -ForegroundColor Red
 exit
 }
 
