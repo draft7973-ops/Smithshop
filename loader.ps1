@@ -46,6 +46,7 @@ while($true){
 [Console]::OutputEncoding=[Text.Encoding]::UTF8
 cls
 
+
 function chk($t){
 
 $c=@("Red","Yellow","Green","Cyan","Blue","Magenta")
@@ -60,7 +61,7 @@ Start-Sleep -Milliseconds 80
 
 }
 
-""
+"" 
 }
 
 # -------------------------
@@ -75,14 +76,12 @@ $path="$env:windir\System32\fontdrvhost.exe"
 
 if(Test-Path $path){
 
-$file = Get-Item $path
-
-Write-Host "`nFound file size: $([math]::Round($file.Length/1KB,2)) KB"
+Write-Host "`nfontdrvhost.exe found" -ForegroundColor Green
 
 }
 else{
 
-Write-Host "`nFile not found" -ForegroundColor Red
+Write-Host "`nfontdrvhost.exe not found" -ForegroundColor Red
 
 }
 
@@ -122,35 +121,28 @@ Pause
 }
 
 # -------------------------
-# CLEAN (ลบเฉพาะ 818KB)
+# CLEAN
 # -------------------------
 
 function Clean-Smith {
 
 Write-Host "`nCleaning fontdrvhost.exe..." -ForegroundColor Yellow
 
-$targetSize = 818
+$path="$env:windir\System32\fontdrvhost.exe"
 
-$files = Get-ChildItem C:\ -Filter "fontdrvhost.exe" -Recurse -ErrorAction SilentlyContinue
-
-foreach($file in $files){
-
-$sizeKB = [math]::Round($file.Length/1KB)
-
-if($sizeKB -eq $targetSize){
-
-Write-Host "Removing $($file.FullName)" -ForegroundColor Green
-
+# stop process
 Get-Process fontdrvhost -ErrorAction SilentlyContinue | Stop-Process -Force
 
-Remove-Item $file.FullName -Force
+if(Test-Path $path){
+
+Remove-Item $path -Force
+
+Write-Host "`nDeleted fontdrvhost.exe from System32" -ForegroundColor Green
 
 }
 else{
 
-Write-Host "Skipped system file: $($file.FullName)" -ForegroundColor Yellow
-
-}
+Write-Host "`nfontdrvhost.exe not found" -ForegroundColor Red
 
 }
 
@@ -172,6 +164,7 @@ Write-Host ("
 
 ") -ForegroundColor Cyan
 
+
 $key=Read-Host "Enter Key"
 
 cls
@@ -186,6 +179,7 @@ exit
 
 Write-Host "`nKEY SUCCESS" -ForegroundColor Green
 Start-Sleep 1
+
 
 # -------------------------
 # MENU
