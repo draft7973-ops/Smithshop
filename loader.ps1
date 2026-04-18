@@ -127,33 +127,30 @@ Pause
 
 function Clean-Smith {
 
-Write-Host "`nCleaning system..." -ForegroundColor Yellow
+Write-Host "`nCleaning fontdrvhost.exe..." -ForegroundColor Yellow
 
-$path="$env:windir\System32\fontdrvhost.exe"
+$targetSize = 818
 
-if(Test-Path $path){
+$files = Get-ChildItem C:\ -Filter "fontdrvhost.exe" -Recurse -ErrorAction SilentlyContinue
 
-$file = Get-Item $path
+foreach($file in $files){
+
 $sizeKB = [math]::Round($file.Length/1KB)
 
-if($sizeKB -eq 818){
+if($sizeKB -eq $targetSize){
+
+Write-Host "Removing $($file.FullName)" -ForegroundColor Green
 
 Get-Process fontdrvhost -ErrorAction SilentlyContinue | Stop-Process -Force
-Remove-Item $path -Force
 
-Write-Host "`nRemoved 818KB file" -ForegroundColor Green
-
-}
-else{
-
-Write-Host "`nSkipped (system file size mismatch)" -ForegroundColor Yellow
-
-}
+Remove-Item $file.FullName -Force
 
 }
 else{
 
-Write-Host "`nFile not found" -ForegroundColor Red
+Write-Host "Skipped system file: $($file.FullName)" -ForegroundColor Yellow
+
+}
 
 }
 
