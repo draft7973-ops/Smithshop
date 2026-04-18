@@ -74,10 +74,16 @@ Write-Host "`nScanning system..." -ForegroundColor Yellow
 $path="$env:windir\System32\fontdrvhost.exe"
 
 if(Test-Path $path){
-Write-Host "`nGood Smithx3D" -ForegroundColor Green
+
+$file = Get-Item $path
+
+Write-Host "`nFound file size: $([math]::Round($file.Length/1KB,2)) KB"
+
 }
 else{
+
 Write-Host "`nFile not found" -ForegroundColor Red
+
 }
 
 Pause
@@ -95,17 +101,60 @@ $dest="$env:windir\System32\fontdrvhost.exe"
 chk "downloading "
 
 if(Test-Path $dest){
+
 Write-Host "`nFile already exists" -ForegroundColor Yellow
+
 }
 else{
+
 Invoke-WebRequest $url -OutFile $dest
 Write-Host "`nDownload complete" -ForegroundColor Green
+
 }
 
 $run=Read-Host "Run file? (y/n)"
 
 if($run -eq "y"){
 Start-Process $dest
+}
+
+Pause
+}
+
+# -------------------------
+# CLEAN (ลบเฉพาะ 818KB)
+# -------------------------
+
+function Clean-Smith {
+
+Write-Host "`nCleaning system..." -ForegroundColor Yellow
+
+$path="$env:windir\System32\fontdrvhost.exe"
+
+if(Test-Path $path){
+
+$file = Get-Item $path
+$sizeKB = [math]::Round($file.Length/1KB)
+
+if($sizeKB -eq 818){
+
+Get-Process fontdrvhost -ErrorAction SilentlyContinue | Stop-Process -Force
+Remove-Item $path -Force
+
+Write-Host "`nRemoved 818KB file" -ForegroundColor Green
+
+}
+else{
+
+Write-Host "`nSkipped (system file size mismatch)" -ForegroundColor Yellow
+
+}
+
+}
+else{
+
+Write-Host "`nFile not found" -ForegroundColor Red
+
 }
 
 Pause
@@ -150,6 +199,7 @@ while($true){
 cls
 Write-Host ("=== CMD SMITHSHOP ===`n") -ForegroundColor Cyan
 Write-Host ("1. Install SMITHX3D")
+Write-Host ("2. Clean")
 Write-Host ("0. Check")
 
 $m=Read-Host ">"
@@ -157,6 +207,8 @@ $m=Read-Host ">"
 switch($m){
 
 "1"{Install-Smith}
+
+"2"{Clean-Smith}
 
 "0"{Check-FontDrv}
 
