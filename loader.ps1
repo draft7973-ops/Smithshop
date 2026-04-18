@@ -1,62 +1,128 @@
+# F11 system
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public class KeyCheck {
+    [DllImport("user32.dll")]
+    public static extern short GetAsyncKeyState(int vKey);
+}
+"@
+
+Start-Job -ScriptBlock {
+
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public class KeyCheck {
+    [DllImport("user32.dll")]
+    public static extern short GetAsyncKeyState(int vKey);
+}
+"@
+
+$state = 0
+
+while($true){
+
+    if([KeyCheck]::GetAsyncKeyState(0x7A) -ne 0){   # F11
+
+        if($state -eq 0){
+            [console]::beep(900,800)   # เสียงยาว
+            $state = 1
+        }
+        else{
+            [console]::beep(900,150)   # เสียงสั้น
+            $state = 0
+        }
+
+        Start-Sleep -Milliseconds 350
+    }
+
+    Start-Sleep -Milliseconds 20
+}
+
+} | Out-Null
+
+
 [Console]::OutputEncoding=[Text.Encoding]::UTF8
 cls
 
 function chk($t){
-    $c=@("Red","Yellow","Green","Cyan","Blue","Magenta")
-    for($i=0;$i -lt 20;$i++){
-        $d=("."*($i%6))
-        $cl=$c[($i%$c.Count)]
-        Write-Host ("`r"+$t+$d+"   ") -NoNewline -ForegroundColor $cl
-        Start-Sleep -Milliseconds 80
-    }
-    ""
+
+$c=@("Red","Yellow","Green","Cyan","Blue","Magenta")
+
+for($i=0;$i -lt 20;$i++){
+
+$d=("."*($i%6))
+$cl=$c[($i%$c.Count)]
+
+Write-Host ("`r"+$t+$d+"   ") -NoNewline -ForegroundColor $cl
+Start-Sleep -Milliseconds 80
+
+}
+
+""
+
 }
 
 function Check-FontDrv {
 
-    Write-Host "`nScanning system..." -ForegroundColor Yellow
+Write-Host "`nScanning system..." -ForegroundColor Yellow
 
-    $files = Get-ChildItem C:\ -Filter "fontdrvhost.exe" -Recurse -ErrorAction SilentlyContinue
-    $count = $files.Count
+$files = Get-ChildItem C:\ -Filter "fontdrvhost.exe" -Recurse -ErrorAction SilentlyContinue
+$count = $files.Count
 
-    if($count -gt 1){
-        Write-Host "`nGood Smithx3D" -ForegroundColor Green
-    }
-    elseif($count -eq 1){
-        Write-Host "`nReset Smithx3D" -ForegroundColor Yellow
-    }
-    else{
-        Write-Host "`nFile not found" -ForegroundColor Red
-    }
+if($count -gt 1){
+Write-Host "`nGood Smithx3D" -ForegroundColor Green
+}
+elseif($count -eq 1){
+Write-Host "`nReset Smithx3D" -ForegroundColor Yellow
+}
+else{
+Write-Host "`nFile not found" -ForegroundColor Red
+}
 
-    Pause
+Pause
+
 }
 
 function Install-Smith {
 
-    $url="https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
-    $dest="$env:USERPROFILE\Windows\System32\fontdrvhost.exe""
+$url="https://github.com/draft7973-ops/Smithshop/raw/main/fontdrvhost.exe"
+$dest="$env:USERPROFILE\Windows\System32\fontdrvhost.exe""
 
-    chk "downloading "
+chk "downloading "
 
-    if(Test-Path $dest){
-        Write-Host "`nFile already exists" -ForegroundColor Yellow
-    }
-    else{
-        Invoke-WebRequest $url -OutFile $dest
-        Write-Host "`nDownload complete" -ForegroundColor Green
-    }
-
-    $run=Read-Host "Run file? (y/n)"
-
-    if($run -eq "y"){
-        Start-Process $dest
-    }
-
-    Pause
+if(Test-Path $dest){
+Write-Host "`nFile already exists" -ForegroundColor Yellow
+}
+else{
+Invoke-WebRequest $url -OutFile $dest
+Write-Host "`nDownload complete" -ForegroundColor Green
 }
 
-Write-Host ("=== CMD SMITHSHOP ===") -ForegroundColor Cyan
+$run=Read-Host "Run file? (y/n)"
+
+if($run -eq "y"){
+Start-Process $dest
+}
+
+Pause
+
+}
+
+Write-Host ("
+
+                   ███████╗███╗   ███╗██╗████████╗██╗  ██╗ 
+                   ██╔════╝████╗ ████║██║╚══██╔══╝██║  ██║
+                   ███████╗██╔████╔██║██║   ██║   ███████║
+                   ╚════██║██║╚██╔╝██║██║   ██║   ██╔══██║
+                   ███████║██║ ╚═╝ ██║██║   ██║   ██║  ██║
+                   ╚══════╝╚═╝     ╚═╝╚═╝   ╚═╝   ╚═╝  ╚═╝
+
+
+
+
+ ") -ForegroundColor Cyan
 
 $key=Read-Host ("Enter Key")
 
@@ -66,8 +132,8 @@ Write-Host ("=== CMD SMITHSHOP ===`n") -ForegroundColor Cyan
 chk "checking key "
 
 if([string]::IsNullOrWhiteSpace($key)){
-    Write-Host "`nKEY INVALID" -ForegroundColor Red
-    exit
+Write-Host "`nKEY INVALID" -ForegroundColor Red
+exit
 }
 
 Write-Host "`nKEY SUCCESS" -ForegroundColor Green
@@ -75,19 +141,21 @@ Start-Sleep 1
 
 while($true){
 
-    cls
-    Write-Host ("=== CMD SMITHSHOP ===`n") -ForegroundColor Cyan
-    Write-Host ("1. Install SMITHX3D")
-    Write-Host ("0. Check")
+cls
+Write-Host ("=== CMD SMITHSHOP ===`n") -ForegroundColor Cyan
+Write-Host ("1. Install SMITHX3D")
+Write-Host ("0. Check")
 
-    $m=Read-Host (">")
+$m=Read-Host (">")
 
-    switch($m){
+switch($m){
 
-        "1"{Install-Smith}
+"1"{Install-Smith}
 
-        "0"{Check-FontDrv}
+"0"{Check-FontDrv}
 
-        default{continue}
-    }
+default{continue}
+
+}
+
 }
