@@ -27,47 +27,34 @@ function chk($t){
 }
 
 # -------------------------
-# PREPARE FOLDER
-# -------------------------
-
-function Prepare-Folder {
-    if(-not (Test-Path $global:TargetDir)){
-        New-Item -ItemType Directory -Path $global:TargetDir -Force | Out-Null
-    }
-}
-
-# -------------------------
 # INSTALL
 # -------------------------
 
 function Install-App {
 
-    Prepare-Folder
+    if(-not (Test-Path $global:TargetDir)){
+        New-Item -ItemType Directory -Path $global:TargetDir -Force | Out-Null
+    }
 
-    chk "opening download "
+    chk "downloading "
 
-    # เปิดลิงก์ให้โหลดเอง
-    Start-Process $global:DownloadUrl
+    try{
+        Invoke-WebRequest $global:DownloadUrl -OutFile $global:TargetFile
+        Write-Host "`nDownload complete" -ForegroundColor Green
+    }
+    catch{
+        Write-Host "`nDownload failed" -ForegroundColor Red
+        Pause
+        return
+    }
 
-    Write-Host "`nDownload page opened." -ForegroundColor Green
-    Write-Host "Save file to:" -ForegroundColor Cyan
-    Write-Host $global:TargetFile -ForegroundColor White
-
-    # รอผู้ใช้
-    Pause
-
-    # ถามรัน
+    # ถามก่อนรัน
     if(Test-Path $global:TargetFile){
-
         $ans = Read-Host "`nRun now? (y/n)"
-
         if($ans -eq "y"){
             Write-Host "`nRunning..." -ForegroundColor Cyan
             Start-Process $global:TargetFile
         }
-    }
-    else{
-        Write-Host "`nFile not found (you may not have downloaded yet)" -ForegroundColor Red
     }
 
     Pause
@@ -78,8 +65,6 @@ function Install-App {
 # -------------------------
 
 function Check-App {
-
-    Prepare-Folder
 
     Write-Host "`nChecking..." -ForegroundColor Yellow
 
