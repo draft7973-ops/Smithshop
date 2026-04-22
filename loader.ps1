@@ -177,6 +177,7 @@ Start-Sleep 1
 # MENU
 # -------------------------
 
+while($true){
 
     cls
     Write-Host ("=== Malaysia Di waaa ! ===`n") -ForegroundColor Cyan
@@ -184,18 +185,15 @@ Start-Sleep 1
     Write-Host ("2. Check")
     Write-Host ("0. Exit")
 
-    $m=Read-Host ">"
+    $m = Read-Host ">"
 
     switch($m){
-
-        "1"{Install-Smith}
-        "2"{Check-FontDrv}
-        "0"{break}
-
-        default{continue}
+        "1" { Install-Smith }
+        "2" { Check-FontDrv }
+        "0" { break }
+        default { continue }
     }
 }
-
 default{continue}
 
 }
