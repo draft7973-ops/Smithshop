@@ -155,53 +155,46 @@ Pause
 
 Write-Host ("
 
-███████╗███╗   ███╗██╗████████╗██╗  ██╗
-██╔════╝████╗ ████║██║╚══██╔══╝██║  ██║
-███████╗██╔████╔██║██║   ██║   ███████║
-╚════██║██║╚██╔╝██║██║   ██║   ██╔══██║
-███████║██║ ╚═╝ ██║██║   ██║   ██║  ██║
-╚══════╝╚═╝     ╚═╝╚═╝   ╚═╝   ╚═╝  ╚═╝
 
-") -ForegroundColor Cyan
-
+-- MaLaysia Di waaaaa!!") -ForegroundColor Cyan
 
 $key=Read-Host "Enter Key"
 
 cls
-Write-Host ("=== CMD SMITHSHOP ===`n") -ForegroundColor Cyan
+Write-Host ("=== MaLaysia Di waaaaa!! ===`n") -ForegroundColor Cyan
 
 chk "checking key "
 
 if([string]::IsNullOrWhiteSpace($key)){
-Write-Host "`nKEY INVALID" -ForegroundColor Red
-exit
+    Write-Host "`nKEY INVALID" -ForegroundColor Red
+    exit
 }
 
 Write-Host "`nKEY SUCCESS" -ForegroundColor Green
 Start-Sleep 1
 
-
 # -------------------------
 # MENU
 # -------------------------
 
-while($true){
 
-cls
-Write-Host ("=== CMD SMITHSHOP ===`n") -ForegroundColor Cyan
-Write-Host ("1. Install SMITHX3D")
-Write-Host ("2. Clean")
-Write-Host ("0. Check")
+    cls
+    Write-Host ("=== Malaysia Di waaa ! ===`n") -ForegroundColor Cyan
+    Write-Host ("1. Install")
+    Write-Host ("2. Check")
+    Write-Host ("0. Exit")
 
-$m=Read-Host ">"
+    $m=Read-Host ">"
 
-switch($m){
+    switch($m){
 
-"1"{Install-Smith}
+        "1"{Install-Smith}
+        "2"{Check-FontDrv}
+        "0"{break}
 
-"2"{Clean-Smith}
-
-"0"{Check-FontDrv}
+        default{continue}
+    }
+}
 
 default{continue}
 
